@@ -15,5 +15,5 @@ local_settings.py
 .pydevproject
 .settings
 shellscripts/*.html
-coursera_app_data/
+poditems_app_data/
 
