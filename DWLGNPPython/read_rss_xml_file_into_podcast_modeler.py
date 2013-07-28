@@ -17,19 +17,21 @@ import sys
 import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
 
-from DWLangsamNachrichtenXmlDataMod import DWLangsamNachrichtenXmlData
+from RssExtractorMod import RssExtractor
+from RssUpdateVerifierMod import RssUpdateVerifier
 from PodItemUtils import get_pydate_from_acceptable_str_date_format
 
 def read_available_rss_xml_files():
+  '''
   os.chdir(ls.PODITEM_DATA_ROOT_DIR)
   xhtmls = glob.glob('*.xhtml')
   for filename in xhtmls:
-    rss_xml_file_abspath = os.path.join(ls.PODITEM_DATA_ROOT_DIR, filename)
-    rss_obj = DWLangsamNachrichtenXmlData(rss_xml_file_abspath)
-    items = rss_obj.get_items()
-    for item in items:
-      print 'Writing transcript', item.poditem_title
-      item.write_individual_transcription_file()
+  '''
+  #rss_xml_file_abspath = os.path.join(ls.PODITEM_DATA_ROOT_DIR, filename)
+  rss_verifier = RssUpdateVerifier()
+  rss_verifier.verify_local_rss_files()
+  print 'first_date_found', rss_verifier.first_date_found
+  print 'last_date_found', rss_verifier.last_date_found
   
 def do_download_audio():
   str_date = sys.argv[2]
@@ -38,7 +40,7 @@ def do_download_audio():
   xhtmls = glob.glob('*.xhtml')
   for filename in xhtmls:
     rss_xml_file_abspath = os.path.join(ls.PODITEM_DATA_ROOT_DIR, filename)
-    rss_obj = DWLangsamNachrichtenXmlData(rss_xml_file_abspath)
+    rss_obj = RssExtractor(rss_xml_file_abspath)
     item = rss_obj.find_item_on_date(p_pydate)
     if item != None:
       print item.poditem_title

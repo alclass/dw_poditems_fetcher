@@ -38,15 +38,17 @@ class RssUpdateVerifier(object):
     for xhtml in xhtmls:
       prefix = xhtml[  : len('dd-mm-yyyy zu dd-mm-yyyy') ]
       pp = prefix.split(' ')
-      from_str_date = pp[1]
+      from_str_date = pp[0]
       to_str_date = pp[2]
       from_date = get_pydate_from_acceptable_str_date_format(from_str_date)
+      if from_date != None: 
+        if self.first_date_found == None or from_date < self.first_date_found:
+          self.first_date_found = from_date
       to_date   = get_pydate_from_acceptable_str_date_format(to_str_date)
-      if self.first_date_found == None or from_date < self.first_date_found:
-        self.first_date_found = from_date
-      if self.last_date_found == None or to_date > self.last_date_found:
-        self.last_date_found = to_date
-        self.latest_rss_xml_filename = xhtml 
+      if to_date != None: 
+        if self.last_date_found == None or to_date > self.last_date_found:
+          self.last_date_found = to_date
+          self.latest_rss_xml_filename = xhtml 
         
   def get_latest_rss_xml_file_abspath(self):
     return os.path.join(ls.PODITEM_DATA_ROOT_DIR, self.latest_rss_xml_filename)

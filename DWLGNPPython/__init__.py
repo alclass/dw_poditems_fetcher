@@ -1,3 +1,9 @@
+'''
+  This is the __init__.py script "forming" package DWLGNPPython 
+
+  The folder name DWLGNPPython (this Python Package element)
+    stands for "Deutsche Welle Langsam geprochene Nachrichten Podcast Python"
+'''
 
 import os, sys
 

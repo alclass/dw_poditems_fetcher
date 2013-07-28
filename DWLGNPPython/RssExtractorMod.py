@@ -137,7 +137,7 @@ class RssExtractor(object):
 
 
 def test_xml():
-  rss_extractor = DW_LGNP_RssExtractor()
+  rss_extractor = RssExtractor()
   print rss_extractor.rss_xml_input_file_abspath
   rss_extractor.list_items_simplified()
 
