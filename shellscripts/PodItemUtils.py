@@ -7,6 +7,8 @@
 from datetime import date
 import string
 
+
+
 def get_pydate_from_str_date_having_the_separatorless_yyyymmdd_format(str_date):
   try:
     year  = int(str_date[0:4])
