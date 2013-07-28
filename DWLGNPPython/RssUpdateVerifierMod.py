@@ -20,7 +20,7 @@ import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
 
 
-class DW_LGNP_RssUpdateVerifier(object):
+class RssUpdateVerifier(object):
 
   DW_LANGSAM_NACHRICHTEN_PODCAST_RSS_URL = 'http://rss.dw.de/xml/DKpodcast_lgn_de'
   PODCAST_RSS_FILENAME_AFTER_WGET = 'DKpodcast_lgn_de'
@@ -88,7 +88,7 @@ class DW_LGNP_RssUpdateVerifier(object):
     
 
 def test1():
-  verifier = DW_LGNP_RssUpdateVerifier()
+  verifier = RssUpdateVerifier()
   verifier.should_it_pull_rss_feeds()
   verifier.download_rss_feeds()
 

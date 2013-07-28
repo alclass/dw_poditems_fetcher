@@ -8,15 +8,15 @@ Created on 28/jul/2013
 '''
 import sys
 
-from DW_LGNP_NewRssVerifierMod import DW_LGNP_NewRssVerifier
+from RssUpdateVerifierMod import RssUpdateVerifier
 
-class DW_LGNP_DownloadDispatcher(object):
+class DownloadDispatcher(object):
   
   
   def dispatch_download_after_date(self, last_item_saved_date):
     '''
     '''
-    rss_dl_verifier = DW_LGNP_NewRssVerifier()
+    rss_dl_verifier = RssUpdateVerifier()
     self.set_rss_xml_input_file_abspath( rss_dl_verifier.get_latest_rss_xml_file_abspath() )
     self.store_poditems()
     for poditem in self.poditems:
@@ -28,7 +28,7 @@ class DW_LGNP_DownloadDispatcher(object):
     return '''Dispatcher object.'''
 
 def test1():
-  dispatcher = DW_LGNP_DownloadDispatcher()
+  dispatcher = DownloadDispatcher()
   print dispatcher
 
 def print_help_and_exit():

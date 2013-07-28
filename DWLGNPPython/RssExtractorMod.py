@@ -33,7 +33,7 @@ def get_latest_rss_file_abspath():
   return xhtml_abspath
 
     
-class DW_LGNP_RssExtractor(object):
+class RssExtractor(object):
   '''
   This class models a data extractor from the DW Langsam Nachrichten Podcast RSS feeds 
   '''
@@ -156,7 +156,7 @@ def download_transcript():
   if pydate == None or type(pydate) != datetime.date:
     print 'Date (%s) could not be understood. Please, retry.' %german_str_date
     print_help_and_exit()
-  dwln_xml_data = DW_LGNP_RssExtractor()
+  dwln_xml_data = RssExtractor()
   poditem = dwln_xml_data.find_item_on_date(pydate)
   print 'poditem:', poditem.poditem_title
   # poditem.download_mp3()

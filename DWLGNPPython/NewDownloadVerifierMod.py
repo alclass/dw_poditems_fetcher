@@ -17,7 +17,7 @@ from PodItemUtils import get_pydate_from_acceptable_str_date_format
 
 import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
-from DW_LGNP_DownloadDispatcherMod import DW_LGNP_DownloadDispatcher
+from DownloadDispatcherMod import DownloadDispatcher
 
 class LogicalError(ValueError):
   pass 
@@ -72,7 +72,7 @@ class ElapsedTimeCases:
     raise LogicalError, 'All options above should have taken an IF path in the code. Some logical error appears to be present.'
 
 
-class DW_LGNP_NewRssVerifier(object):
+class NewDownloadVerifier(object):
   
   def __init__(self):
     self.today = date.today()
@@ -97,7 +97,7 @@ class DW_LGNP_NewRssVerifier(object):
     return self.new_download_case_tuple[0] 
 
   def go_download_missing_ones(self):       
-    rss_xml_obj = DW_LGNP_DownloadDispatcher()
+    rss_xml_obj = DownloadDispatcher()
     rss_xml_obj.dispatch_download_after_date(self.get_last_item_saved_date())
 
   def decide_if_necessary_to_go_for_download(self):
@@ -173,11 +173,7 @@ class DW_LGNP_NewRssVerifier(object):
   
 
 def test1():
-  print 'Test 1'
-  verifier = DW_LGNP_NewRssVerifier()
-  last_date_found = verifier.get_last_item_saved_date()
-  print 'last_date_found', last_date_found
-  print 'download?', verifier.has_time_elapse_for_new_downloads()
+  verifier = NewDownloadVerifier()
   verifier.explain_situation_for_a_new_download()
 
 def process():
