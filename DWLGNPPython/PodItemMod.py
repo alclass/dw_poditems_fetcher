@@ -14,6 +14,8 @@ from PodItemUtils import get_pydate_from_german_str_date
 import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
 
+import glob
+
 class PodItemCannotBeInstantiated(ValueError):
   pass
 
@@ -105,7 +107,38 @@ class PodItem(object):
     ans = raw_input('Confirm (Y*/n) ? ')
     if ans in ['n', 'N']:
       return
-    os.system(comm)
+    ret_val = os.system(comm)
+    if ret_val == 0:
+      self.rename_mp3()
+  
+  def rename_mp3(self):
+    filename = self.poditem_mp3_url.split('/')[-1]
+    if os.path.isfile(filename):
+      newname = '%s %s' %(str(self.poditem_date), filename)
+      print 'Renaming [%s] TO [%s]' %(filename, newname)
+      os.rename(filename, newname) 
+
+  def download_mp3_and_transcript_if_not_yet_done_so(self):
+    download_target_dir_abspath = ls.get_media_data_dir_abspath(self.poditem_date.year, self.poditem_date.month)
+    os.chdir(download_target_dir_abspath)
+    str_date = str(self.poditem_date)
+    mp3s = glob.glob('*.mp3')
+    mp3_has_been_found = False
+    for mp3 in mp3s:
+      if mp3.startswith(str_date):
+        mp3_has_been_found = True
+        break
+    if not mp3_has_been_found:
+      self.download_mp3()
+    txts = glob.glob('*.txt')
+    txt_has_been_found = False
+    for txt in txts:
+      if txt.startswith(str_date):
+        txt_has_been_found = True
+        break
+    if not txt_has_been_found:
+      self.write_individual_transcription_file()
+    
 
   def fetch_mp3_and_save_transcript(self):
     '''

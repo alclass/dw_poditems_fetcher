@@ -17,7 +17,7 @@ from PodItemUtils import get_pydate_from_acceptable_str_date_format
 
 import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
-from DownloadDispatcherMod import DownloadDispatcher
+#from DownloadDispatcherMod import DownloadDispatcher
 
 class LogicalError(ValueError):
   pass 

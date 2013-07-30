@@ -15,6 +15,7 @@ import os
 import sys
 
 from PodItemUtils import get_pydate_from_acceptable_str_date_format
+from RssExtractorMod import RssExtractor
 
 import __init__; __init__._insert_parent_dir_to_path_if_needed()
 import local_settings as ls
@@ -31,6 +32,7 @@ class RssUpdateVerifier(object):
     self.first_date_found = None
     self.last_date_found = None
     self.latest_rss_xml_filename = None
+    self.verify_local_rss_files()
 
   def verify_local_rss_files(self):
     os.chdir(ls.PODITEM_DATA_ROOT_DIR)
@@ -73,20 +75,24 @@ class RssUpdateVerifier(object):
     os.chdir(ls.PODITEM_DATA_ROOT_DIR)
     comm = 'wget %s' %self.DW_LANGSAM_NACHRICHTEN_PODCAST_RSS_URL
     print comm
-    '''
+    _ = raw_input('Press [ENTER] to download updated RSS feeds. ')
     ret_val = os.system(comm)
     if ret_val == 0:
-      if os.path.isfile(self.PODCAST_RSS_FILENAME_AFTER_WGET):
-        rss_xml_abspath = os.path.join(ls.PODITEM_DATA_ROOT_DIR, self.PODCAST_RSS_FILENAME_AFTER_WGET)
-        extractor = DWLangsamNachrichtenRssExtractor(rss_xml_abspath)
-        from_date = extractor.get_earliest_date_in_rss()
-        to_date   = extractor.get_latest_date_in_rss()
-        from_str_date = '%d-%02d-%02d' %(from_date.year,from_date.month,from_date.day) 
-        to_str_date   = '%d-%02d-%02d' %(to_date.year,  to_date.month,  to_date.day)
-        new_rss_filename = self.LOCAL_RSS_FILENAME_BASE %{'from_str_date':from_str_date, 'to_str_date':to_str_date}
-        print 'Rename', self.PODCAST_RSS_FILENAME_AFTER_WGET, 'TO', new_rss_filename 
-        os.rename(self.PODCAST_RSS_FILENAME_AFTER_WGET, new_rss_filename)
+      self.rename_rss_feeds_filename()
+    
+  def rename_rss_feeds_filename(self):
     '''
+    '''
+    if os.path.isfile(self.PODCAST_RSS_FILENAME_AFTER_WGET):
+      rss_xml_abspath = os.path.join(ls.PODITEM_DATA_ROOT_DIR, self.PODCAST_RSS_FILENAME_AFTER_WGET)
+      extractor = RssExtractor(rss_xml_abspath)
+      from_date = extractor.get_earliest_date_in_rss()
+      to_date   = extractor.get_latest_date_in_rss()
+      from_str_date = '%d-%02d-%02d' %(from_date.year,from_date.month,from_date.day) 
+      to_str_date   = '%d-%02d-%02d' %(to_date.year,  to_date.month,  to_date.day)
+      new_rss_filename = self.LOCAL_RSS_FILENAME_BASE %{'from_str_date':from_str_date, 'to_str_date':to_str_date}
+      print 'Rename', self.PODCAST_RSS_FILENAME_AFTER_WGET, 'TO', new_rss_filename 
+      os.rename(self.PODCAST_RSS_FILENAME_AFTER_WGET, new_rss_filename)
     
 
 def test1():
