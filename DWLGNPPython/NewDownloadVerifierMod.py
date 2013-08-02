@@ -10,7 +10,10 @@ Created on 24/jul/2013
 
 import datetime
 from datetime import date #, timedelta
+from datetime import timedelta #, timedelta
+import timeutils
 import os
+import glob
 
 #from DWLangsamNachrichtenRssExtractorMod import DWLangsamNachrichtenRssExtractor
 from PodItemUtils import get_pydate_from_acceptable_str_date_format  
@@ -96,9 +99,11 @@ class NewDownloadVerifier(object):
     # The self.new_download_case_tuple is composed of 3 data, ie, a boolean, an int, and an explanation string
     return self.new_download_case_tuple[0] 
 
+  '''
   def go_download_missing_ones(self):       
     rss_xml_obj = DownloadDispatcher()
     rss_xml_obj.dispatch_download_after_date(self.get_last_item_saved_date())
+  '''
 
   def decide_if_necessary_to_go_for_download(self):
     if self.has_time_elapse_for_new_downloads():
@@ -106,7 +111,7 @@ class NewDownloadVerifier(object):
       self.go_download_missing_ones()
     print 'No download is needed.'
 
-  def get_last_year_in_stock(self):
+  def chdir_to_last_year_in_stock(self):
     '''
       This method should only be called by get_last_item_saved()
         or by a method that positions to the last year's folder 
@@ -127,16 +132,17 @@ class NewDownloadVerifier(object):
     else:
       year_dir = '%d' %self.today.year
       os.mkdir(year_dir)
+    self.int_year_from_year_dir = int(year_dir)
     os.chdir(year_dir)
 
-  def get_last_month_in_stock(self):
+  def chdir_to_last_month_in_stock(self):
     '''
       This method should only be called by get_last_item_saved()
         or by a method that positions to the last year's folder 
     '''
     month_dir = None
     for month in xrange(12,0,-1):
-      folder_name = '%02d-%s' %(month, ls.array_3_letter_monther[month-1])
+      folder_name = '%02d-%s' %(month, timeutils.array_3_letter_monther[month-1])
       if os.path.isdir(folder_name):
         month_dir = folder_name
         break
@@ -144,31 +150,57 @@ class NewDownloadVerifier(object):
       month_dir = '01-Jan'
       print 'Creating folder', month_dir 
       os.mkdir(month_dir)
+    self.int_month_from_month_dir = int( month_dir.split('-')[0] )
     os.chdir(month_dir)
 
   def get_last_item_saved_date(self, reread=False):
+    '''
+    '''
     if self.last_date_found != None and not reread:
       return self.last_date_found
-    self.get_last_year_in_stock()
-    self.get_last_month_in_stock()
-    files = os.listdir('.')
+    self.chdir_to_last_year_in_stock()
+    self.chdir_to_last_month_in_stock()
+    self.determine_last_item_saved_date_or_None()
+
+  def diminish_1_month(self):
+    '''
+    '''
+    date_previously_hold = self.year_month_dirtree_working_date
+    self.year_month_dirtree_working_date = timeutils.regenerate_date_decreasing_1_to_month(date_previously_hold)
+    os.chdir('..')
+    if self.year_month_dirtree_working_date.year != date_previously_hold.year:
+      os.chdir('..')
+      year_dir = str(self.int_year_from_year_dir)
+      os.chdir(year_dir)
+    month_folder_name = ls.get_month_folder_name(self.year_month_dirtree_working_date.month)
+    if not os.path.isdir(month_folder_name):
+      # Give up for months should be contiguous!
+      return False
+    os.chdir(month_folder_name)
+    return True
+    
+  def determine_last_item_saved_date_or_None(self, diminish_month=False):
+    '''
+    '''    
+    mp3s = glob.glob('*.mp3') # files = os.listdir('.')
     print os.path.abspath('.')
     self.last_date_found = None
-    for entry in files:
-      if not os.path.isfile(entry):
+    for mp3 in mp3s:
+      if not os.path.isfile(mp3):
         continue
-      extlessname, ext = os.path.splitext(entry)
-      if ext != '.mp3':
-        continue
-      print 'entry', entry
+      print 'mp3', mp3
       try:
-        str_date = extlessname.split(' ')[0]
+        str_date = mp3.split(' ')[0]
         date_found = get_pydate_from_acceptable_str_date_format(str_date)
         if date_found != None:
           if self.last_date_found == None or date_found > self.last_date_found:
             self.last_date_found = date_found
       except IndexError:
         continue
+    if self.last_date_found == None:
+      if self.diminish_1_month():
+        # recurse trying one month before
+        return self.determine_last_item_saved_date_or_None()
     return self.last_date_found 
   
 

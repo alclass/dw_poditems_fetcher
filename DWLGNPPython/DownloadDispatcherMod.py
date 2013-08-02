@@ -34,10 +34,14 @@ class DownloadDispatcher(object):
   def dispatch_download_after_date(self, last_item_saved_date):
     '''
     '''
+    if last_item_saved_date == None:
+      print 'last_item_saved_date is None'
+      return
     self.rss_extractor.set_rss_xml_input_file_abspath( self.rss_dl_verifier.get_latest_rss_xml_file_abspath() )
     self.rss_extractor.store_poditems()
     for poditem in self.rss_extractor.poditems:
-      if poditem.poditem_date > last_item_saved_date:
+      print poditem.poditem_date
+      if poditem.poditem_date != None and poditem.poditem_date > last_item_saved_date:
         poditem.download_mp3()
         poditem.write_individual_transcription_file()
 
