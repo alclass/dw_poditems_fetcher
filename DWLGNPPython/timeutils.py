@@ -17,4 +17,6 @@ def regenerate_date_decreasing_1_to_month(p_date):
   date_1_month_decreased = p_date_regenerated - delta_31_days
   return date_1_month_decreased
 
-
+def get_month_folder_name_from_pydate(pydate):
+  month = pydate.month
+  return '%02d-%s' %(month, array_3_letter_monther[month-1])

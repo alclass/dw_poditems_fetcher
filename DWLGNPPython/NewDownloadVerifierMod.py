@@ -78,6 +78,7 @@ class ElapsedTimeCases:
 class NewDownloadVerifier(object):
   
   def __init__(self):
+    self.year_month_dirtree_working_date = None
     self.today = date.today()
     self.last_date_found = None
 
@@ -151,6 +152,7 @@ class NewDownloadVerifier(object):
       print 'Creating folder', month_dir 
       os.mkdir(month_dir)
     self.int_month_from_month_dir = int( month_dir.split('-')[0] )
+    self.year_month_dirtree_working_date = date(year=self.int_year_from_year_dir, month=self.int_month_from_month_dir, day=28)  
     os.chdir(month_dir)
 
   def get_last_item_saved_date(self, reread=False):
@@ -166,13 +168,14 @@ class NewDownloadVerifier(object):
     '''
     '''
     date_previously_hold = self.year_month_dirtree_working_date
+    #date_previously_hold = date(year=self.int_year_from_year_dir, month=self.int_month_from_month_dir, day=28)
     self.year_month_dirtree_working_date = timeutils.regenerate_date_decreasing_1_to_month(date_previously_hold)
     os.chdir('..')
     if self.year_month_dirtree_working_date.year != date_previously_hold.year:
       os.chdir('..')
       year_dir = str(self.int_year_from_year_dir)
       os.chdir(year_dir)
-    month_folder_name = ls.get_month_folder_name(self.year_month_dirtree_working_date.month)
+    month_folder_name = timeutils.get_month_folder_name_from_pydate(self.year_month_dirtree_working_date)
     if not os.path.isdir(month_folder_name):
       # Give up for months should be contiguous!
       return False
